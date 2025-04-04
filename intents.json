@@ -1,0 +1,175 @@
+{
+"prefixe-ip":"192.168.0.0",
+"masque-ip":"255.255.255.252",
+"prefixe-loopback":"100.100.100.0",
+"masque-loopback":"255.255.255.255",
+"AS":
+[
+    {
+        "as-number":"100",
+        "routeurs":
+        [
+            {
+                "hostname":"PE1",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"P1"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"CE11"
+                    },
+                    {
+                        "name":"GigabitEthernet3/0",
+                        "voisin":"CE12"
+                    }
+                ],
+                "type":"PE",
+                "client-number": null
+            },
+            {
+                "hostname":"PE2",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"P2"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"CE21"
+                    },
+                    {
+                        "name":"GigabitEthernet3/0",
+                        "voisin":"CE22"
+                    }
+                ],
+                "type":"PE",
+                "client-number": null
+            },
+            {
+                "hostname":"P1",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"PE1"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"P2"
+                    }
+                ],
+                "type":"P",
+                "client-number": null
+            },
+            {
+                "hostname":"P2",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"PE2"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"P1"
+                    }
+                ],
+                "type":"P",
+                "client-number": null
+            }
+        ]
+    },
+    {
+        "as-number":"110",
+        "routeurs":
+        [
+            {
+                "hostname":"CE11",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"switch"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"PE1"
+                    }
+                ],
+                "type":"CE",
+                "client-number": "1"
+            }
+        ]
+    },
+    {
+        "as-number":"120",
+        "routeurs":
+        [
+            {
+                "hostname":"CE12",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"switch"
+                    },
+                    {
+                        "name":"GigabitEthernet3/0",
+                        "voisin":"PE1"
+                    }
+                ],
+                "type":"CE",
+                "client-number": "2"
+            }
+        ]
+    },
+    {
+        "as-number":"210",
+        "routeurs":
+        [
+            {
+                "hostname":"CE21",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"switch"
+                    },
+                    {
+                        "name":"GigabitEthernet2/0",
+                        "voisin":"PE2"
+                    }
+                ],
+                "type":"CE",
+                "client-number": "1"
+            }
+        ]
+    },
+    {
+        "as-number":"220",
+        "routeurs":
+        [
+            {
+                "hostname":"CE22",
+                "interfaces":
+                [
+                    {
+                        "name":"GigabitEthernet1/0",
+                        "voisin":"switch"
+                    },
+                    {
+                        "name":"GigabitEthernet3/0",
+                        "voisin":"PE2"
+                    }
+                ],
+                "type":"CE",
+                "client-number": "2"
+            }
+        ]
+    }
+]
+}
