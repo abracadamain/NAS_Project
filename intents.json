@@ -1,7 +1,7 @@
 {
-"prefixe-ip":"192.168.0.0",
+"prefixe-ip":"192.168.0.0/27",
 "masque-ip":"255.255.255.252",
-"prefixe-loopback":"100.100.100.0",
+"prefixe-loopback":"100.100.100.0/29",
 "masque-loopback":"255.255.255.255",
 "AS":
 [
