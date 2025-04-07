@@ -1,0 +1,25 @@
+{ 
+    "PE1" :
+    {
+        "routeur-id" : "",
+        "loopback" : "",
+        "interfaces":
+        [
+            {
+                "name":"GigabitEthernet1/0",
+                "adresse":"",
+                "adresse-reseau":""
+            },
+            {
+                "name":"GigabitEthernet2/0",
+                "adresse":"",
+                "adresse-reseau":""
+            },
+            {
+                "name":"GigabitEthernet3/0",
+                "adresse":"",
+                "adresse-reseau":""
+            }
+        ]
+    }
+}
