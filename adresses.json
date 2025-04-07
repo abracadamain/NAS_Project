@@ -1,44 +1,80 @@
-{ 
-    "PE1" :
-    {
-        "routeur-id" : "",
-        "loopback" : "adrlop",
-        "interfaces":
-        [
-            {
-                "name":"GigabitEthernet1/0",
-                "adresse":"adr1",
-                "adresse-reseau":"adrrezo"
-            },
-            {
-                "name":"GigabitEthernet2/0",
-                "adresse":"adr2",
-                "adresse-reseau":""
-            },
-            {
-                "name":"GigabitEthernet3/0",
-                "adresse":"adr3",
-                "adresse-reseau":""
-            }
-        ]
+{
+    "PE1": {
+        "routeur-id": "1.1.1.1",
+        "loopback": "100.100.100.1",
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.0",
+            "adresse": "192.168.0.1"
+        },
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.4",
+            "adresse": "192.168.0.5"
+        },
+        "GigabitEthernet3/0": {
+            "adresse-reseau": "192.168.0.8",
+            "adresse": "192.168.0.9"
+        }
     },
-    "PE2" :
-    {
-        "routeur-id" : "",
-        "loopback" : "adrlop2",
-        "interfaces":
-        [
-            
-            {
-                "name":"GigabitEthernet2/0",
-                "adresse":"",
-                "adresse-reseau":""
-            },
-            {
-                "name":"GigabitEthernet3/0",
-                "adresse":"",
-                "adresse-reseau":""
-            }
-        ]
+    "PE2": {
+        "routeur-id": "2.2.2.2",
+        "loopback": "100.100.100.2",
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.12",
+            "adresse": "192.168.0.13"
+        },
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.16",
+            "adresse": "192.168.0.17"
+        },
+        "GigabitEthernet3/0": {
+            "adresse-reseau": "192.168.0.20",
+            "adresse": "192.168.0.21"
+        }
+    },
+    "P1": {
+        "routeur-id": "3.3.3.3",
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.0",
+            "adresse": "192.168.0.2"
+        },
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.24",
+            "adresse": "192.168.0.25"
+        }
+    },
+    "P2": {
+        "routeur-id": "4.4.4.4",
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.12",
+            "adresse": "192.168.0.14"
+        },
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.24",
+            "adresse": "192.168.0.26"
+        }
+    },
+    "CE11": {
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.4",
+            "adresse": "192.168.0.6"
+        }
+    },
+    "CE12": {
+        "GigabitEthernet3/0": {
+            "adresse-reseau": "192.168.0.4",
+            "adresse": "192.168.0.6"
+        }
+    },
+    "CE21": {
+        "GigabitEthernet2/0": {
+            "adresse-reseau": "192.168.0.16",
+            "adresse": "192.168.0.18"
+        }
+    },
+    "CE22": {
+        "GigabitEthernet3/0": {
+            "adresse-reseau": "192.168.0.16",
+            "adresse": "192.168.0.18"
+        }
     }
 }
