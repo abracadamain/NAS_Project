@@ -36,14 +36,16 @@ for i in range (len(nodes)):
     node_name=node["name"]
     node_info=requests.get(f"http://localhost:3080/v2/projects/{project_id}/nodes/{node_id}").json()
     node_directory=node_info["node_directory"]
-    file_avant="i[{i}]_startup-config.cfg"
+    file_avant="i"+str(i+1)+"_startup-config.cfg"
     config_file_path = os.path.join(node_directory, "configs", file_avant)
     stop_url = f"http://localhost:3080/v2/projects/v2/projects/{project_id}/nodes/{node_id}/stop"
     requests.post(stop_url)
     print("Node stopped.")
     try:
-        file_apres=""
-        shutil.copyfile("{node_name}.cfg",config_file_path)
+        #file_apres="{node_name}.cfg"
+        file_apres=str(node_name)+"_i"+str(i+1)+"_startup-config.cfg"
+        file_apres="Nouveau dossier/"+file_apres
+        shutil.copyfile(file_apres,config_file_path)
         print("Config file replaced successfully.")
     except Exception as e:
         print(f"Failed to copy config file: {e}")
