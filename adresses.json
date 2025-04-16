@@ -54,24 +54,40 @@
         }
     },
     "CE11": {
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.28",
+            "adresse": "192.168.0.29"
+        },
         "GigabitEthernet2/0": {
             "adresse-reseau": "192.168.0.4",
             "adresse": "192.168.0.6"
         }
     },
     "CE12": {
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.32",
+            "adresse": "192.168.0.33"
+        },
         "GigabitEthernet3/0": {
             "adresse-reseau": "192.168.0.4",
             "adresse": "192.168.0.6"
         }
     },
     "CE21": {
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.36",
+            "adresse": "192.168.0.37"
+        },
         "GigabitEthernet2/0": {
             "adresse-reseau": "192.168.0.16",
             "adresse": "192.168.0.18"
         }
     },
     "CE22": {
+        "GigabitEthernet1/0": {
+            "adresse-reseau": "192.168.0.40",
+            "adresse": "192.168.0.41"
+        },
         "GigabitEthernet3/0": {
             "adresse-reseau": "192.168.0.16",
             "adresse": "192.168.0.18"
