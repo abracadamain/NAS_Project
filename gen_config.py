@@ -38,10 +38,13 @@ def get_vrf_id(voisin_name):
     return (get_as_neighbor(data, voisin_name)[:-1])
 
 def interfaces_actives(r_name):
+    intf_act=[]
     for a in data["AS"]:
         for r in a["routeurs"]:
             if r["hostname"]== r_name:
-                return len(r["interfaces"])
+                for i in range(len(r["interfaces"])):
+                    intf_act.append(r["interfaces"][i]["name"])
+    return intf_act
 
 
 
@@ -116,7 +119,7 @@ def intf(routeur, masque_ip, data):
 
     
 def ospf (routeur):
-     # a enlever une fois adr.json complet
+    if routeur["router-type"]!="CE":
         r_name = routeur["hostname"]
         r_id = addr[r_name]["routeur-id"]
         config.append("router ospf 1")
@@ -158,22 +161,32 @@ def eBGP_PE(routeur):
                 voisin_name=i["voisin"]
                 config.append(f"address-family ipv4 vrf vrf{get_vrf_id(voisin_name)}")
                 as_neighbor = get_as_neighbor(data, voisin_name)
-                for k in range (interfaces_actives(voisin_name)):
-                    config.append(f"neighbor ... remote-as {as_neighbor}")
-                    config.append("neighbor ... activate")
+                for k in interfaces_actives(voisin_name):
+                    adr_neighbor = addr[voisin_name][k]["adresse"]
+                    config.append(f"neighbor {adr_neighbor} remote-as {as_neighbor}")
+                    config.append(f"neighbor {adr_neighbor} activate")
                 config.append("exit-address-family")
 
 
 def bgp_CE (routeur, asnumber, masque_ip):
+    r_name = routeur["hostname"]
     if routeur["router-type"]=="CE":
         config.append(f"router bgp {asnumber}")
         config.append("bgp log-neighbor-changes")
-        for k in range (interfaces_actives(routeur["hostname"])):
-            config.append(f"network ADDRESSE IP {masque_ip} ")
+        for k in interfaces_actives(r_name):
+            network_adr=addr[r_name][k]["adresse-reseau"]
+            config.append(f"network {network_adr} mask {masque_ip} ")
         for i in routeur["interfaces"]:
             if check_neighbor_type(routeur, data,i["name"])=="PE":
                 voisin_name = i["voisin"]
-                config.append(f"neighbor ADDRESSE DU VOISIN remote-as {get_as_neighbor(data, voisin_name)}")
+                for a in data["AS"]:
+                    for r in a["routeurs"]:
+                        if r["hostname"] == voisin_name: 
+                            for ii in r["interfaces"]:
+                                if ii["voisin"]== r_name:
+                                    intf_link = ii["name"]
+                adr_voisin = addr[voisin_name][intf_link]["adresse"]
+                config.append(f"neighbor {adr_voisin} remote-as {get_as_neighbor(data, voisin_name)}")
 
 
 fin_config="ip forward-protocol nd\nno ip http server\nno ip http secure-server\ncontrol-plane\nline con 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nstopbits 1\nline aux 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\n stopbits 1\nline vty 0 4\n login\nend"
