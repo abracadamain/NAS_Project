@@ -22,8 +22,7 @@ for i in range (len(nodes)):
     print("Node stopped.")
     try:
         
-        file_apres=str(node_name)+"_i"+str(i+1)+"_startup-config.cfg"
-        file_apres="Nouveau dossier/"+file_apres
+        file_apres=str(node_name)+".cfg"
         shutil.copyfile(file_apres,config_file_path)
         print("Config file replaced successfully.")
     except Exception as e:
