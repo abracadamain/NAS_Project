@@ -24,10 +24,10 @@ for i in range(len(data["AS"])) :
     for j in range(len(routeurs)) :
         routeur = routeurs[j]
         dict_ip[routeur["hostname"]] = {}
-        if routeur["type"] != "CE" :
+        if routeur["router-type"] != "CE" :
             dict_ip[routeur["hostname"]]["routeur-id"] = indiceRouteurId + "." + indiceRouteurId+ "." +indiceRouteurId+ "." +indiceRouteurId
             indiceRouteurId = str(int(indiceRouteurId) + 1)
-        if routeur["type"] == "PE" :
+        if routeur["router-type"] == "PE" :
             dict_ip[routeur["hostname"]]["loopback"] = loopback[indiceLoopback]
             indiceLoopback += 1
         for k in range(len(routeur["interfaces"])) :

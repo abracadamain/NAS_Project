@@ -70,7 +70,7 @@ def mpls(routeur):
 
 
 def loopback(routeur, masque, addr):
-    if routeur["router-type"]=="PE" or routeur["router-type"]=="P":
+    if routeur["router-type"]=="PE" :
         routeur_name = routeur["hostname"]
         if routeur_name in addr :
             adr_lb = addr[routeur_name]["loopback"]
@@ -86,7 +86,7 @@ def intf(routeur, masque_ip, data):
         interfaces.append(r_i["name"])
 
     for t in toutes :
-        config.append(t)
+        config.append(f"interface {t}")
 
         if t in interfaces :
             for i in routeur["interfaces"]:
@@ -97,14 +97,12 @@ def intf(routeur, masque_ip, data):
                 if check_neighbor_type(routeur, data,t)=="CE":
                     
                     voisin_CE=True
-                    config.append(f"ip vrf forwarding {get_vrf_id(voisin_name)}")
+                    config.append(f"ip vrf forwarding vrf{get_vrf_id(voisin_name)}")
 
-            if r_type == "PE": # a enlever une fois adr.json complet
-                for ad in addr[r_name]["interfaces"]:
-                    if ad["name"] == t:
-                        addresse = ad["adresse"]
-                        config.append(f"ip address {addresse} {masque_ip}")
-                        config.append("negotiation auto")
+            interface=addr[r_name][t]
+            adresse=interface["adresse"]
+            config.append(f"ip address {adresse} {masque_ip}")
+            config.append("negotiation auto")
 
             if not voisin_CE and routeur["router-type"]!="CE":
                 config.append("mpls ip")
@@ -118,21 +116,20 @@ def intf(routeur, masque_ip, data):
 
     
 def ospf (routeur):
-    if routeur["router-type"]=="PE": # a enlever une fois adr.json complet
+     # a enlever une fois adr.json complet
         r_name = routeur["hostname"]
         r_id = addr[r_name]["routeur-id"]
-        adr_lb = addr[r_name]["loopback"]
         config.append("router ospf 1")
         config.append(f"router-id {r_id}")
-        config.append(f"network {adr_lb} 0.0.0.0 area 0")
+        if routeur["router-type"]=="PE":    
+            adr_lb = addr[r_name]["loopback"]
+            config.append(f"network {adr_lb} 0.0.0.0 area 0")
 
         for i in routeur["interfaces"]:
+            intf_name = i["name"]
             if check_neighbor_type(routeur, data, i["name"])!= "CE":
-                config.append("voisin P")
-                for ii in addr[r_name]["interfaces"]:
-                    if ii["name"]==i["name"]:
-                        adr_res=ii["adresse-reseau"]
-                        config.append(f"network {adr_res} 0.0.0.3 area 0")
+                adr_res=addr[r_name][intf_name]["adresse-reseau"]
+                config.append(f"network {adr_res} 0.0.0.3 area 0")
                         
 
 def iBGP_PE(routeur, as_num):
@@ -168,14 +165,15 @@ def eBGP_PE(routeur):
 
 
 def bgp_CE (routeur, asnumber, masque_ip):
-    config.append(f"router bgp {asnumber}")
-    config.append("bgp log-neighbor-changes")
-    for k in range (interfaces_actives(routeur["hostname"])):
-        config.append(f"network ADDRESSE IP {masque_ip} ")
-    for i in routeur["interfaces"]:
-        if check_neighbor_type(routeur, data,i["name"])=="PE":
-            voisin_name = i["voisin"]
-            config.append(f"neighbor ADDRESSE DU VOISIN remote-as {get_as_neighbor(data, voisin_name)}")
+    if routeur["router-type"]=="CE":
+        config.append(f"router bgp {asnumber}")
+        config.append("bgp log-neighbor-changes")
+        for k in range (interfaces_actives(routeur["hostname"])):
+            config.append(f"network ADDRESSE IP {masque_ip} ")
+        for i in routeur["interfaces"]:
+            if check_neighbor_type(routeur, data,i["name"])=="PE":
+                voisin_name = i["voisin"]
+                config.append(f"neighbor ADDRESSE DU VOISIN remote-as {get_as_neighbor(data, voisin_name)}")
 
 
 fin_config="ip forward-protocol nd\nno ip http server\nno ip http secure-server\ncontrol-plane\nline con 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nstopbits 1\nline aux 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\n stopbits 1\nline vty 0 4\n login\nend"
