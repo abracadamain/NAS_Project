@@ -1,35 +1,14 @@
 import requests
 import shutil
 import os
+username = "gns3"
+password = "gns3"
 project_name="NAS"
-projects=requests.get("http://localhost:3080/v2/projects").json()
+auth = (username, password)
+projects=requests.get("http://localhost:3080/v2/projects",auth=auth).json()
 project=next((p for p in projects if p["name"]==project_name), None)
 project_id=project["project_id"]
 nodes=requests.get(f"http://localhost:3080/v2/projects/{project_id}/nodes").json()
-'''
-node=nodes[1]
-node_id=node["node_id"]
-node_name=node["name"]
-print(f"{node_name}")
-node_info=requests.get(f"http://localhost:3080/v2/projects/{project_id}/nodes/{node_id}").json()
-node_directory=node_info["node_directory"]
-config_file_path = os.path.join(node_directory, "configs", "i1_startup-config.cfg")
-stop_url = f"http://localhost:3080/v2/projects/v2/projects/{project_id}/nodes/{node_id}/stop"
-requests.post(stop_url)
-print("Node stopped.")
-
-# Step 2: Replace the config file
-try:
-    shutil.copyfile("PE1.cfg",config_file_path)
-    print("Config file replaced successfully.")
-except Exception as e:
-    print(f"Failed to copy config file: {e}")
-
-# Step 3: Start the node again
-start_url = f"http://localhost:3080/v2/projects/v2/projects/v2/projects/{project_id}/nodes/{node_id}/start"
-requests.post(start_url)
-print("Node started.")
-'''
 for i in range (len(nodes)):
     node=nodes[i]
     node_id=node["node_id"]
@@ -42,7 +21,7 @@ for i in range (len(nodes)):
     requests.post(stop_url)
     print("Node stopped.")
     try:
-        #file_apres="{node_name}.cfg"
+        
         file_apres=str(node_name)+"_i"+str(i+1)+"_startup-config.cfg"
         file_apres="Nouveau dossier/"+file_apres
         shutil.copyfile(file_apres,config_file_path)
