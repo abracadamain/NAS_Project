@@ -9,8 +9,8 @@ dict_ip = {}
 with open("intents.json", "r") as file:
     data = json.load(file)
 
-loopback = ipaddress.ip_network(data["prefixe-loopback"])
-preIp = ipaddress.ip_network(data["prefixe-ip"])
+loopback = ipaddress.ip_network(data["plage-loopback"])
+preIp = ipaddress.ip_network(data["plage-ip"])
 subnets = list(preIp.subnets(new_prefix=30))
 
 indiceRouteurId = "1"

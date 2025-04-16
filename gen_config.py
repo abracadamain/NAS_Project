@@ -7,9 +7,7 @@ with open('intents.json', 'r', encoding='utf-8') as file:
 with open('adresses.json', 'r', encoding='utf-8') as file:
     addr = json.load(file)
 
-prefixe_ip = data["prefixe-ip"]
 mask_ip = data ["masque-ip"]
-prefixe_loopback = data ["prefixe-loopback"]
 mask_loopback = data["masque-loopback"]
 
 
