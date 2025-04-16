@@ -1,10 +1,9 @@
 import json
 import ipaddress
 
-def custom_serializer(obj):
-    if isinstance(obj, (ipaddress.IPv4Address, ipaddress.IPv4Network)):
-        return str(obj)
-    raise TypeError(f"Type {type(obj)} not serializable")
+def ipv4_to_str(obj):
+    """Converti un objet IPv4Address ou IPv4Network en string"""
+    return str(obj)
 
 dict_ip = {}
 with open("intents.json", "r") as file:
@@ -18,11 +17,8 @@ indiceRouteurId = "1"
 indiceLoopback = 1
 indiceSubnet = 0
 
-for i in range(len(data["AS"])) :
-    AS = data["AS"][i]
-    routeurs = AS["routeurs"]
-    for j in range(len(routeurs)) :
-        routeur = routeurs[j]
+for As in data["AS"] :
+    for routeur in As["routeurs"] :
         dict_ip[routeur["hostname"]] = {}
         if routeur["router-type"] != "CE" :
             dict_ip[routeur["hostname"]]["routeur-id"] = indiceRouteurId + "." + indiceRouteurId+ "." +indiceRouteurId+ "." +indiceRouteurId
@@ -30,22 +26,17 @@ for i in range(len(data["AS"])) :
         if routeur["router-type"] == "PE" :
             dict_ip[routeur["hostname"]]["loopback"] = loopback[indiceLoopback]
             indiceLoopback += 1
-        for k in range(len(routeur["interfaces"])) :
-            interface = routeur["interfaces"][k]
-            # if interface["voisin"] != "switch" :
+        for interface in routeur["interfaces"] :
             dict_ip[routeur["hostname"]][interface["name"]] = {}
             if interface["voisin"] in dict_ip.keys() :
-                for Vrouteur in routeurs :
-                    print("prévoisin", Vrouteur["hostname"], interface["voisin"])
-                    if Vrouteur["hostname"] == interface["voisin"] :
-                        print("voisin", Vrouteur["hostname"])
-                        for Vinterface in Vrouteur["interfaces"] :
-                            print(Vinterface["voisin"], routeur["hostname"], Vinterface["voisin"] == routeur["hostname"])
-                            if Vinterface["voisin"] == routeur["hostname"] :
-                                interfaceVoisin = Vinterface["name"]
-                                print(routeur["hostname"], interface["voisin"], interfaceVoisin, dict_ip[interface["voisin"]][interfaceVoisin]["adresse"])
-
-                                
+                for Vas in data["AS"] :
+                    Vrouteurs = Vas["routeurs"]
+                    for Vrouteur in Vrouteurs :
+                        if Vrouteur["hostname"] == interface["voisin"] :
+                            for Vinterface in Vrouteur["interfaces"] :
+                                if Vinterface["voisin"] == routeur["hostname"] :
+                                    interfaceVoisin = Vinterface["name"]
+                                    
                 dict_ip[routeur["hostname"]][interface["name"]]["adresse-reseau"] = dict_ip[interface["voisin"]][interfaceVoisin]["adresse-reseau"]
                 dict_ip[routeur["hostname"]][interface["name"]]["adresse"] = dict_ip[interface["voisin"]][interfaceVoisin]["adresse"] + 1
             
@@ -55,7 +46,7 @@ for i in range(len(data["AS"])) :
                 indiceSubnet += 1
 
 with open("adresses.json", "w") as file:
-    json.dump(dict_ip, file, indent=4, default=custom_serializer)         
+    json.dump(dict_ip, file, indent=4, default=ipv4_to_str)         
 
 
             

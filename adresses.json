@@ -69,8 +69,8 @@
             "adresse": "192.168.0.33"
         },
         "GigabitEthernet3/0": {
-            "adresse-reseau": "192.168.0.4",
-            "adresse": "192.168.0.6"
+            "adresse-reseau": "192.168.0.8",
+            "adresse": "192.168.0.10"
         }
     },
     "CE21": {
@@ -89,8 +89,8 @@
             "adresse": "192.168.0.41"
         },
         "GigabitEthernet3/0": {
-            "adresse-reseau": "192.168.0.16",
-            "adresse": "192.168.0.18"
+            "adresse-reseau": "192.168.0.20",
+            "adresse": "192.168.0.22"
         }
     }
 }
