@@ -14,7 +14,7 @@ mask_loopback = data["masque-loopback"]
 
 
 config = []
-deb_config="version 15.2\nservice timestamps debug datetime msec\nservice timestamps log datetime msec\nboot-start-marker\nboot-end-marker\nno aaa new-model\nno ip icmp rate-limit unreachable\nip cef"
+deb_config="version 15.2\nservice timestamps debug datetime msec\nservice timestamps log datetime msec\nboot-start-marker\nboot-end-marker\nno aaa new-model\nno ip icmp rate-limit unreachable\nip cef\n!\n!\n!"
 
 
 def check_neighbor_type (routeur, data, interface_name):
@@ -59,17 +59,17 @@ def vrf_PE(routeur, num_as, data):
                     if r["hostname"] == neighbor and r["router-type"] == "CE":
                         vrf_id = get_vrf_id(r["hostname"])
                         num_client = r["client-number"]
-                        config.append(f"ip vrf vrf{vrf_id}")
+                        config.append(f"!\n!\nip vrf vrf{vrf_id}")
                         config.append(f"rd {num_as}:{vrf_id}")
                         config.append(f"route-target export {num_as}:{num_client}")
                         config.append(f"route-target import {num_as}:{num_client}")
 
 
 def mpls(routeur):
-    config.append("no ip domain lookup\nno ipv6 cef")
+    config.append("!\n!\n!\nno ip domain lookup\nno ipv6 cef")
     if routeur["router-type"]=="PE" or routeur["router-type"]=="P":
         config.append("mpls label protocol ldp")
-    config.append("multilink bundle-name authenticated\n!\nip tcp synwait-time 5")
+    config.append("multilink bundle-name authenticated\n!\nip tcp synwait-time 5\n!\n!")
 
 
 def loopback(routeur, masque, addr):
@@ -89,7 +89,7 @@ def intf(routeur, masque_ip, data):
         interfaces.append(r_i["name"])
 
     for t in toutes :
-        config.append(f"interface {t}")
+        config.append(f"!\n!\ninterface {t}")
 
         if t in interfaces :
             for i in routeur["interfaces"]:
@@ -111,7 +111,7 @@ def intf(routeur, masque_ip, data):
                 config.append("mpls ip")
 
         else:
-            config.append("no ip address\n shutdown")
+            config.append("no ip address\nshutdown")
             if "FastEthernet" in t:
                 config.append("duplex full")
             else:
@@ -119,6 +119,7 @@ def intf(routeur, masque_ip, data):
 
     
 def ospf (routeur):
+    config.append("!\n!\n!\n!")
     if routeur["router-type"]!="CE":
         r_name = routeur["hostname"]
         r_id = addr[r_name]["routeur-id"]
@@ -145,10 +146,10 @@ def iBGP_PE(routeur, as_num):
                     lb_PE=addr[r["hostname"]]["loopback"]
                     config.append (f"neighbor {lb_PE} remote-as {as_num}")
                     config.append(f"neighbor {lb_PE} update-source Loopback0")
-                    config.append("address-family ipv4")
+                    config.append("!\n!\naddress-family ipv4")
                     config.append(f"neighbor {lb_PE} activate")
                     config.append("exit-address-family")
-                    config.append("address-family vpnv4")
+                    config.append("!\n!\naddress-family vpnv4")
                     config.append(f"neighbor {lb_PE} activate")
                     config.append(f"neighbor {lb_PE} send-community both")
                     config.append("exit-address-family")
@@ -159,7 +160,7 @@ def eBGP_PE(routeur):
         for i in routeur["interfaces"]:
             if check_neighbor_type(routeur, data,i["name"])=="CE":
                 voisin_name=i["voisin"]
-                config.append(f"address-family ipv4 vrf vrf{get_vrf_id(voisin_name)}")
+                config.append(f"!\n!\naddress-family ipv4 vrf vrf{get_vrf_id(voisin_name)}")
                 as_neighbor = get_as_neighbor(data, voisin_name)
                 for k in interfaces_actives(voisin_name):
                     adr_neighbor = addr[voisin_name][k]["adresse"]
@@ -189,7 +190,7 @@ def bgp_CE (routeur, asnumber, masque_ip):
                 config.append(f"neighbor {adr_voisin} remote-as {get_as_neighbor(data, voisin_name)}")
 
 
-fin_config="ip forward-protocol nd\nno ip http server\nno ip http secure-server\ncontrol-plane\nline con 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nstopbits 1\nline aux 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\n stopbits 1\nline vty 0 4\n login\nend"
+fin_config="!\n!\n!\n!\nip forward-protocol nd\nno ip http server\nno ip http secure-server\ncontrol-plane\nline con 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nstopbits 1\nline aux 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\n stopbits 1\nline vty 0 4\n login\nend"
 
 
 
@@ -197,10 +198,11 @@ for a in data["AS"]:
     asnumber = a["as-number"]
     
     for r in a["routeurs"]:
+        r_name = r["hostname"]
         config=[]
-        #config.append(deb_config)
-        config.append("hostname")
-        config.append(r["hostname"])
+        config.append(deb_config)
+        config.append(f"hostname {r_name} \n! \n!")
+
         vrf_PE(r, asnumber, data)
 
         mpls(r)
@@ -210,13 +212,19 @@ for a in data["AS"]:
         intf(r, mask_ip, data)
 
         ospf(r)
-
+        config.append("!\n!\n!\n!")
         iBGP_PE(r, asnumber)
-
+        config.append("!\n!\n!\n!")
         eBGP_PE(r)
-
+        config.append("!\n!\n!\n!")
         bgp_CE(r, asnumber, mask_ip)
+        config.append("!\n!\n!\n!")
+        config.append(fin_config)
 
-        #config.append(fin_config)
+        #print(config)
 
-        print(config)
+        
+        filename = f"{r_name}.cfg"
+        with open(filename, 'w') as f:
+            for item in config:
+                f.write(f"{item}\n")
